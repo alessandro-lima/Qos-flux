@@ -1,0 +1,596 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:          QoS-Flux
+# Short-Description: traffic shaping rules for SDN
+# Description:       traffic shaping rules for SDN
+### END INIT INFO
+
+##############################################################################
+#
+# QoS-Flux 1.0
+#
+# Dynamic traffic shaping for SDN in different flows (elephants vs. mice, alpha vs. beta and Cheetah vs. turtles)
+#
+# Copyright (C) 2018 Alessandro Lima <alessandrolima1987@gmail.com>
+#
+# License details and more available at:
+# https://github.com/alessandro-lima/Qos-flux
+#
+#
+
+#The script was developed based on the SuperShaper-SOHO 2.0.
+
+#This script has the prospect of improving on SDN (Software Defined Network) networks the loss of packets, delay, jitter and bandwidth in different flows.
+
+#To run this script, you will need iproute2 (tc) and the netfilter of the Linux kernel installed.
+#The howto of the TC filter can be found here: http://lartc.org/howto/lartc.qdisc.filters.html
+#Man page for u32 classifier can be found here: http://man7.org/linux/man-pages/man8/tc-u32.8.html
+#
+##############################################################################
+
+
+# Your outbound interface Open Vswitch (OVS)
+IF_1=s2-eth1
+IF_2=s2-eth2
+IF_3=s2-eth3
+IF_4=s3-eth1
+IF_5=s3-eth2
+IF_6=s3-eth3
+IF_7=s4-eth1
+IF_8=s4-eth2
+IF_9=s4-eth3
+
+# Definitions meter and percent BANDWIDTH flows (CHEETAH FLOW)
+
+BANDWIDTH_MAX=1000000
+
+BANDWIDTH_PERCENT=95
+
+# Set full path to TC command, unless it's in PATH
+TC=tc
+
+# Where to store flow labels, accessible for other tools
+#FLOWS_FILENAME="/run/qos-flux.csv"
+
+# Calculate actual max bandwidth
+BANDWIDTH=$((BANDWIDTH_PERCENT*BANDWIDTH_MAX/100))
+
+# Which qdisc to use for HFSC leaves (Elephant Flow and Alpha Flow)
+LEAF_QDISC="sfq perturb 10"
+#LEAF_QDISC="fq_codel noecn"
+
+##############################################################################
+######## FILTER PRIORITY #########
+##############################################################################
+
+
+function filter_for_flow {
+    flowid="$1"; shift
+    $TC filter add dev $IF_1 parent 1: protocol ip prio $((filter_prio++)) u32 "$@" flowid "1:$flowid"
+    $TC filter add dev $IF_2 parent 1: protocol ip prio $((filter_prio++)) u32 "$@" flowid "1:$flowid"
+    $TC filter add dev $IF_3 parent 1: protocol ip prio $((filter_prio++)) u32 "$@" flowid "1:$flowid"
+    $TC filter add dev $IF_4 parent 1: protocol ip prio $((filter_prio++)) u32 "$@" flowid "1:$flowid"
+    $TC filter add dev $IF_5 parent 1: protocol ip prio $((filter_prio++)) u32 "$@" flowid "1:$flowid"
+    $TC filter add dev $IF_6 parent 1: protocol ip prio $((filter_prio++)) u32 "$@" flowid "1:$flowid"
+    $TC filter add dev $IF_7 parent 1: protocol ip prio $((filter_prio++)) u32 "$@" flowid "1:$flowid"
+    $TC filter add dev $IF_8 parent 1: protocol ip prio $((filter_prio++)) u32 "$@" flowid "1:$flowid"
+    $TC filter add dev $IF_9 parent 1: protocol ip prio $((filter_prio++)) u32 "$@" flowid "1:$flowid"
+}
+
+used_bw_percent_0=0
+function define_ls_flow_0 {   
+     flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
+    min_bw=$((min_bw_percent*BANDWIDTH/100))
+    $TC class add dev $IF_1 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
+    $TC qdisc add dev $IF_1 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    used_bw_percent_0=$((used_bw_percent_0+min_bw_percent))
+}
+
+
+used_bw_percent_1=0
+function define_ls_flow_1 {
+    flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
+    min_bw=$((min_bw_percent*BANDWIDTH/100))
+    $TC class add dev $IF_2 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
+    $TC qdisc add dev $IF_2 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    used_bw_percent_1=$((used_bw_percent_1+min_bw_percent))
+}
+
+used_bw_percent_2=0
+function define_ls_flow_2 {
+    flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
+    min_bw=$((min_bw_percent*BANDWIDTH/100))
+    $TC class add dev $IF_3 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
+    $TC qdisc add dev $IF_3 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    used_bw_percent_2=$((used_bw_percent_2+min_bw_percent))
+
+}
+
+used_bw_percent_3=0
+function define_ls_flow_3 {
+    flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
+    min_bw=$((min_bw_percent*BANDWIDTH/100))
+    $TC class add dev $IF_4 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
+    $TC qdisc add dev $IF_4 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    used_bw_percent_3=$((used_bw_percent_3+min_bw_percent))
+
+}
+
+used_bw_percent_4=0
+function define_ls_flow_4 {
+    flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
+    min_bw=$((min_bw_percent*BANDWIDTH/100))
+    $TC class add dev $IF_5 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
+    $TC qdisc add dev $IF_5 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    used_bw_percent_4=$((used_bw_percent_4+min_bw_percent))
+
+}
+
+used_bw_percent_5=0
+function define_ls_flow_5 {
+    flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
+    min_bw=$((min_bw_percent*BANDWIDTH/100))
+    $TC class add dev $IF_6 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
+    $TC qdisc add dev $IF_6 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    used_bw_percent_3=$((used_bw_percent_5+min_bw_percent))
+
+}
+
+used_bw_percent_6=0
+function define_ls_flow_6 {
+    flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
+    min_bw=$((min_bw_percent*BANDWIDTH/100))
+    $TC class add dev $IF_7 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
+    $TC qdisc add dev $IF_7 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    used_bw_percent_6=$((used_bw_percent_6+min_bw_percent))
+}
+
+used_bw_percent_7=0
+function define_ls_flow_7 {
+    flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
+    min_bw=$((min_bw_percent*BANDWIDTH/100))
+    $TC class add dev $IF_8 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
+    $TC qdisc add dev $IF_8 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    used_bw_percent_7=$((used_bw_percent_7+min_bw_percent))
+
+}
+
+used_bw_percent_8=0
+function define_ls_flow_8 {
+    flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
+    min_bw=$((min_bw_percent*BANDWIDTH/100))
+    $TC class add dev $IF_9 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
+    $TC qdisc add dev $IF_9 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    used_bw_percent_8=$((used_bw_percent_8+min_bw_percent))
+
+}
+
+function start_me {
+    stop_me quiet 
+
+    printf "Qos-flux Shaping on $IF_1\n"
+    printf "Qos-flux Shaping on $IF_2\n"
+    printf "Qos-flux Shaping on $IF_3\n"
+    printf "Qos-flux Shaping on $IF_4\n"
+    printf "Qos-flux Shaping on $IF_5\n"
+    printf "Qos-flux Shaping on $IF_6\n"
+    printf "Qos-flux Shaping on $IF_7\n"
+    printf "Qos-flux Shaping on $IF_8\n"
+    printf "Qos-flux Shaping on $IF_9\n"
+
+################### FLOW DEFINITIONS ###################
+
+    # Add root qdisc
+    $TC qdisc add dev $IF_1 root handle 1: hfsc default 50
+    $TC qdisc add dev $IF_2 root handle 1: hfsc default 50
+    $TC qdisc add dev $IF_3 root handle 1: hfsc default 50 
+    $TC qdisc add dev $IF_4 root handle 1: hfsc default 50
+    $TC qdisc add dev $IF_5 root handle 1: hfsc default 50
+    $TC qdisc add dev $IF_6 root handle 1: hfsc default 50
+    $TC qdisc add dev $IF_7 root handle 1: hfsc default 50 
+    $TC qdisc add dev $IF_8 root handle 1: hfsc default 50
+    $TC qdisc add dev $IF_9 root handle 1: hfsc default 50
+
+    # Add main class, setting interface BANDWIDTH limit
+
+    $TC class add dev $IF_1 parent 1: classid 1:1 hfsc ls m2 "${BANDWIDTH}Kbit" ul m2 "${BANDWIDTH}Kbit"
+
+    $TC class add dev $IF_2 parent 1: classid 1:1 hfsc ls m2 "${BANDWIDTH}Kbit" ul m2 "${BANDWIDTH}Kbit"
+     
+    $TC class add dev $IF_3 parent 1: classid 1:1 hfsc ls m2 "${BANDWIDTH}Kbit" ul m2 "${BANDWIDTH}Kbit"
+  
+    $TC class add dev $IF_4 parent 1: classid 1:1 hfsc ls m2 "${BANDWIDTH}Kbit" ul m2 "${BANDWIDTH}Kbit"
+    
+    $TC class add dev $IF_5 parent 1: classid 1:1 hfsc ls m2 "${BANDWIDTH}Kbit" ul m2 "${BANDWIDTH}Kbit"
+  
+    $TC class add dev $IF_6 parent 1: classid 1:1 hfsc ls m2 "${BANDWIDTH}Kbit" ul m2 "${BANDWIDTH}Kbit"
+ 
+    $TC class add dev $IF_7 parent 1: classid 1:1 hfsc ls m2 "${BANDWIDTH}Kbit" ul m2 "${BANDWIDTH}Kbit"
+
+    $TC class add dev $IF_8 parent 1: classid 1:1 hfsc ls m2 "${BANDWIDTH}Kbit" ul m2 "${BANDWIDTH}Kbit"
+
+    $TC class add dev $IF_9 parent 1: classid 1:1 hfsc ls m2 "${BANDWIDTH}Kbit" ul m2 "${BANDWIDTH}Kbit"
+
+
+################ Define_ls_flow #######################
+
+
+# Define_ls_flow <flow id> <min_bw_percent> <label>. 
+# min_bw_percent is how much bandwidth (in percent) to use for each flow. The numbers should add up to exactly 100.
+
+    define_ls_flow_0 11  100 #"ICMP"
+    define_ls_flow_0 12  100 #"DNS"
+    define_ls_flow_0 20  100 #"Traffic VoIP and Videoconferece"
+    define_ls_flow_0 40  100 #"SMTP"
+    define_ls_flow_0 41  100 #"IMAP and POP3"
+    define_ls_flow_0 45  100 #"HTTP"
+    define_ls_flow_0 48  100 #"FTP"
+    define_ls_flow_0 50  85 #"Default" # unclassified traffic
+    define_ls_flow_0 54  85 #"HTTPS" 
+ 
+   
+
+    define_ls_flow_1 11  100 #"ICMP"
+    define_ls_flow_1 12  100 #"DNS"
+    define_ls_flow_1 20  100 #"Traffic VoIP and Videoconferece"
+    define_ls_flow_1 40  100 #"SMTP"
+    define_ls_flow_1 41  100 #"IMAP and POP3"
+    define_ls_flow_1 45  100 #"HTTP"
+    define_ls_flow_1 48  100 #"FTP"
+    define_ls_flow_1 50  85 #"Default" # unclassified traffic
+    define_ls_flow_1 54  85 #"HTTPS" 
+  
+   
+
+    define_ls_flow_2 11  100 #"ICMP"
+    define_ls_flow_2 12  100 #"DNS"
+    define_ls_flow_2 20  100 #"Traffic VoIP and Videoconferece"
+    define_ls_flow_2 40  100 #"SMTP"
+    define_ls_flow_2 41  100 #"IMAP and POP3"
+    define_ls_flow_2 45  100 #"HTTP"
+    define_ls_flow_2 48  100 #"FTP"
+    define_ls_flow_2 50  85 #"Default" # unclassified traffic
+    define_ls_flow_2 54  85 #"HTTPS"  
+  
+
+    define_ls_flow_3 11  100 #"ICMP"
+    define_ls_flow_3 12  100 #"DNS"
+    define_ls_flow_3 20  100 #"Traffic VoIP and Videoconferece"
+    define_ls_flow_3 40  100 #"SMTP"
+    define_ls_flow_3 41  100 #"IMAP and POP3"
+    define_ls_flow_3 45  100 #"HTTP"
+    define_ls_flow_3 48  100 #"FTP"
+    define_ls_flow_3 50  85 #"Default" # unclassified traffic
+    define_ls_flow_3 54  85 #"HTTPS" 
+
+ 
+  
+
+    define_ls_flow_4 11  100 #"ICMP"
+    define_ls_flow_4 12  100 #"DNS"
+    define_ls_flow_4 20  100 #"Traffic VoIP and Videoconferece"
+    define_ls_flow_4 40  100 #"SMTP"
+    define_ls_flow_4 41  100 #"IMAP and POP3"
+    define_ls_flow_4 45  100 #"HTTP"
+    define_ls_flow_4 48  100 #"FTP"
+    define_ls_flow_4 50  85 #"Default" # unclassified traffic
+    define_ls_flow_4 54  85 #"HTTPS" 
+
+ 
+
+    define_ls_flow_5 11  100 #"ICMP"
+    define_ls_flow_5 12  100 #"DNS"
+    define_ls_flow_5 20  100 #"Traffic VoIP and Videoconferece"
+    define_ls_flow_5 40  100 #"SMTP"
+    define_ls_flow_5 41  100 #"IMAP and POP3"
+    define_ls_flow_5 45  100 #"HTTP"
+    define_ls_flow_5 48  100 #"FTP"
+    define_ls_flow_5 50  85 #"Default" # unclassified traffic
+    define_ls_flow_5 54  85 #"HTTPS" 
+
+
+    define_ls_flow_6 11  100 #"ICMP"
+    define_ls_flow_6 12  100 #"DNS"
+    define_ls_flow_6 20  100 #"Traffic VoIP and Videoconferece"
+    define_ls_flow_6 40  100 #"SMTP"
+    define_ls_flow_6 41  100 #"IMAP and POP3"
+    define_ls_flow_6 45  100 #"HTTP"
+    define_ls_flow_6 48  100 #"FTP"
+    define_ls_flow_6 50  85 #"Default" # unclassified traffic
+    define_ls_flow_6 54  85 #"HTTPS" 
+  
+ 
+  
+    define_ls_flow_7 11  100 #"ICMP"
+    define_ls_flow_7 12  100 #"DNS"
+    define_ls_flow_7 20  100 #"Traffic VoIP and Videoconferece"
+    define_ls_flow_7 40  100 #"SMTP"
+    define_ls_flow_7 41  100 #"IMAP and POP3"
+    define_ls_flow_7 45  100 #"HTTP"
+    define_ls_flow_7 48  100 #"FTP"
+    define_ls_flow_7 50  85 #"Default" # unclassified traffic
+    define_ls_flow_7 54  85 #"HTTPS"  
+
+
+
+    define_ls_flow_8 11  100 #"ICMP"
+    define_ls_flow_8 12  100 #"DNS"
+    define_ls_flow_8 20  100 #"Traffic VoIP and Videoconferece"
+    define_ls_flow_8 40  100 #"SMTP"
+    define_ls_flow_8 41  100 #"IMAP and POP3"
+    define_ls_flow_8 45  100 #"HTTP"
+    define_ls_flow_8 48  100 #"FTP"
+    define_ls_flow_8 50  85 #"Default" # unclassified traffic
+    define_ls_flow_8 54  85 #"HTTPS" 
+
+
+
+    ################### FILTERS ###################
+
+    # Remember that filters for flows are defined in order of how they
+    # should match IP packet data.  It's crucial that you match on very
+    # narrow terms first and leave the broad matches for last.
+
+    
+    # IP packet total lenght < 128
+    filter_for_flow 11 \
+        match ip protocol 1 0xff \
+        match u16 0x0000 0xff80 at 2
+
+    # DNS (small packets)
+    # IP dst port == 53
+    # IP packet total lenth < 128
+    filter_for_flow 12 \
+        match ip dport 53 0xffff \
+        match u16 0x0000 0xff80 at 2
+
+    # VoIP / Videoconference 
+    filter_for_flow 21 match ip sport 16384 0xffff
+    filter_for_flow 21 match ip dport 16384 0xffff
+    filter_for_flow 20 match ip sport 5060 0xffff
+    filter_for_flow 20 match ip dport 5060 0xffff
+    filter_for_flow 20 match ip sport 5061 0xffff # TLS
+    filter_for_flow 20 match ip dport 5061 0xffff # TLS
+
+    # SMTP (with and without SSL)
+    filter_for_flow 40 match ip dport 25 0xffff
+    filter_for_flow 40 match ip dport 465 0xffff
+    filter_for_flow 40 match ip dport 587 0xffff
+
+    # IMAP (with and without SSL)
+    filter_for_flow 41 match ip dport 143 0xffff
+    filter_for_flow 41 match ip dport 993 0xffff
+
+    # POP3 (with and without SSL)
+    filter_for_flow 41 match ip dport 110 0xffff
+    filter_for_flow 41 match ip dport 995 0xffff
+
+    # HTTP
+    filter_for_flow 45 match ip dport 80 0xffff
+    
+    # FTP (with and without SSL)
+    filter_for_flow 48 match ip dport 20 0xffff
+    filter_for_flow 48 match ip dport 21 0xffff
+    filter_for_flow 48 match ip dport 989 0xffff
+    filter_for_flow 48 match ip dport 990 0xffff
+
+    # HTTPS
+    filter_for_flow 51 match ip dport 443 0xffff
+    filter_for_flow 51 match ip sport 443 0xffff
+
+    # Small packets < 128 bytes
+    # IP packet total length < 128
+    filter_for_flow 13 \
+        match u16 0x0000 0xff80 at 2
+
+    # Small packets < 256 bytes
+    # IP packet total length < 256
+    filter_for_flow 14 \
+        match u16 0x0000 0xff00 at 2
+}
+
+function stop_me {
+
+    # Remove existing qdisc
+
+    active_qdisc=$(tc qdisc show dev $IF_1| head -n 1 | cut -d" " -f 2)
+    if [ -n "$active_qdisc" -a "$active_qdisc" = "hfsc" ]; then
+        if [ -z "$1" -o "$1" != "quiet" ]; then
+            printf "Qos-flux off shaping on $IF_1\n"
+        fi
+        $TC qdisc del root dev $IF_1 2>&1 >/dev/null
+    fi
+
+    
+    active_qdisc=$(tc qdisc show dev $IF_2| head -n 1 | cut -d" " -f 2)
+    if [ -n "$active_qdisc" -a "$active_qdisc" = "hfsc" ]; then
+        if [ -z "$1" -o "$1" != "quiet" ]; then
+            printf "Qos-flux off shaping on $IF_2\n"
+        fi
+        $TC qdisc del root dev $IF_2 2>&1 >/dev/null
+    fi
+
+    active_qdisc=$(tc qdisc show dev $IF_3| head -n 1 | cut -d" " -f 2)
+    if [ -n "$active_qdisc" -a "$active_qdisc" = "hfsc" ]; then
+        if [ -z "$1" -o "$1" != "quiet" ]; then
+            printf "Qos-flux off shaping on $IF_3\n"
+        fi
+        $TC qdisc del root dev $IF_3 2>&1 >/dev/null
+    fi
+
+    active_qdisc=$(tc qdisc show dev $IF_4| head -n 1 | cut -d" " -f 2)
+    if [ -n "$active_qdisc" -a "$active_qdisc" = "hfsc" ]; then
+        if [ -z "$1" -o "$1" != "quiet" ]; then
+            printf "Qos-flux off shaping on $IF_4\n"
+        fi
+        $TC qdisc del root dev $IF_4 2>&1 >/dev/null
+    fi
+
+    active_qdisc=$(tc qdisc show dev $IF_5| head -n 1 | cut -d" " -f 2)
+    if [ -n "$active_qdisc" -a "$active_qdisc" = "hfsc" ]; then
+        if [ -z "$1" -o "$1" != "quiet" ]; then
+            printf "Qos-flux off shaping on $IF_5\n"
+        fi
+        $TC qdisc del root dev $IF_5 2>&1 >/dev/null
+    fi
+
+
+    active_qdisc=$(tc qdisc show dev $IF_6| head -n 1 | cut -d" " -f 2)
+    if [ -n "$active_qdisc" -a "$active_qdisc" = "hfsc" ]; then
+        if [ -z "$1" -o "$1" != "quiet" ]; then
+            printf "Qos-flux off shaping on $IF_6\n"
+        fi
+        $TC qdisc del root dev $IF_6 2>&1 >/dev/null
+    fi
+
+    active_qdisc=$(tc qdisc show dev $IF_7| head -n 1 | cut -d" " -f 2)
+    if [ -n "$active_qdisc" -a "$active_qdisc" = "hfsc" ]; then
+        if [ -z "$1" -o "$1" != "quiet" ]; then
+            printf "Qos-flux off shaping on $IF_7\n"
+        fi
+        $TC qdisc del root dev $IF_7 2>&1 >/dev/null
+    fi
+
+
+    active_qdisc=$(tc qdisc show dev $IF_8| head -n 1 | cut -d" " -f 2)
+    if [ -n "$active_qdisc" -a "$active_qdisc" = "hfsc" ]; then
+        if [ -z "$1" -o "$1" != "quiet" ]; then
+            printf "Qos-flux off shaping on $IF_8\n"
+        fi
+        $TC qdisc del root dev $IF_8 2>&1 >/dev/null
+    fi
+   
+
+    active_qdisc=$(tc qdisc show dev $IF_9| head -n 1 | cut -d" " -f 2)
+    if [ -n "$active_qdisc" -a "$active_qdisc" = "hfsc" ]; then
+        if [ -z "$1" -o "$1" != "quiet" ]; then
+            printf "Qos-flux off shaping on $IF_9\n"
+        fi
+        $TC qdisc del root dev $IF_9 2>&1 >/dev/null
+    fi
+    # Remove existing flows file if it exists
+     [ -e "$FLOWS_FILENAME" ] && rm -f "$FLOWS_FILENAME"
+}
+
+function status_me {
+
+    # Report settings
+    printf "************************* QDISC ******************************\n"
+    $TC qdisc show dev $IF_1
+    printf "************************* CLASS ******************************\n"
+    $TC -s class show dev $IF_1 | grep -v 'tokens:' | grep -v 'lended:'
+
+    # Report settings
+    printf "************************* QDISC ******************************\n"
+    $TC qdisc show dev $IF_2
+    printf "************************* CLASS ******************************\n"
+    $TC -s class show dev $IF_2 | grep -v 'tokens:' | grep -v 'lended:'
+
+    # Report settings
+    printf "************************* QDISC ******************************\n"
+    $TC qdisc show dev $IF_3
+    printf "************************* CLASS ******************************\n"
+    $TC -s class show dev $IF_3 | grep -v 'tokens:' | grep -v 'lended:'
+
+   # Report settings
+    printf "************************* QDISC ******************************\n"
+    $TC qdisc show dev $IF_4
+    printf "************************* CLASS ******************************\n"
+    $TC -s class show dev $IF_4 | grep -v 'tokens:' | grep -v 'lended:'
+
+   # Report settings
+    printf "************************* QDISC ******************************\n"
+    $TC qdisc show dev $IF_5
+    printf "************************* CLASS ******************************\n"
+    $TC -s class show dev $IF_5 | grep -v 'tokens:' | grep -v 'lended:'
+
+    # Report settings
+    printf "************************* QDISC ******************************\n"
+    $TC qdisc show dev $IF_6
+    printf "************************* CLASS ******************************\n"
+    $TC -s class show dev $IF_6 | grep -v 'tokens:' | grep -v 'lended:'
+
+    # Report settings
+    printf "************************* QDISC ******************************\n"
+    $TC qdisc show dev $IF_7
+    printf "************************* CLASS ******************************\n"
+    $TC -s class show dev $IF_7 | grep -v 'tokens:' | grep -v 'lended:'
+
+   # Report settings
+    printf "************************* QDISC ******************************\n"
+    $TC qdisc show dev $IF_8
+    printf "************************* CLASS ******************************\n"
+    $TC -s class show dev $IF_8 | grep -v 'tokens:' | grep -v 'lended:'
+
+    # Report settings
+    printf "************************* QDISC ******************************\n"
+    $TC qdisc show dev $IF_9
+    printf "************************* CLASS ******************************\n"
+    $TC -s class show dev $IF_9 | grep -v 'tokens:' | grep -v 'lended:'
+}
+
+function filter_me {
+
+    # Report filter settings
+    printf "************************* FILTER *****************************\n"
+    $TC -p filter show dev $IF_1
+
+    # Report filter settings
+    printf "************************* FILTER *****************************\n"
+    $TC -p filter show dev $IF_2
+
+    # Report filter settings
+    printf "************************* FILTER *****************************\n"
+    $TC -p filter show dev $IF_3
+
+    # Report filter settings
+    printf "************************* FILTER *****************************\n"
+    $TC -p filter show dev $IF_4
+
+    # Report filter settings
+    printf "************************* FILTER *****************************\n"
+    $TC -p filter show dev $IF_5
+
+    # Report filter settings
+    printf "************************* FILTER *****************************\n"
+    $TC -p filter show dev $IF_6
+
+    # Report filter settings
+    printf "************************* FILTER *****************************\n"
+    $TC -p filter show dev $IF_7
+
+    # Report filter settings
+    printf "************************* FILTER *****************************\n"
+    $TC -p filter show dev $IF_8
+
+    # Report filter settings
+    printf "************************* FILTER *****************************\n"
+    $TC -p filter show dev $IF_9
+}
+
+
+case "$1" in
+    start)
+        start_me
+        ;;
+    stop)
+        stop_me
+        ;;
+    restart)
+        stop_me
+        start_me
+        ;;
+    status)
+        status_me
+        ;;
+    filter)
+        filter_me
+        ;;
+    *)
+        printf "Usage: $0 {start|stop|restart|status|filter}\n" >&2
+        exit 1
+esac
+
+exit 0
+ 
