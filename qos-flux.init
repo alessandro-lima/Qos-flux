@@ -47,14 +47,13 @@ BANDWIDTH_MAX=1000000
 
 BANDWIDTH_PERCENT=95
 
+BANDWIDTH=$((BANDWIDTH_PERCENT*BANDWIDTH_MAX/100))
+
 # Set full path to TC command, unless it's in PATH
 TC=tc
 
 # Where to store flow labels, accessible for other tools
-#FLOWS_FILENAME="/run/qos-flux.csv"
-
-# Calculate actual max bandwidth
-BANDWIDTH=$((BANDWIDTH_PERCENT*BANDWIDTH_MAX/100))
+FLOWS_FILENAME="/run/qos-flux.csv"
 
 # Which qdisc to use for HFSC leaves (Elephant Flow and Alpha Flow)
 #LEAF_QDISC="sfq perturb 10"
