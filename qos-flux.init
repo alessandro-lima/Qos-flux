@@ -53,7 +53,7 @@ BANDWIDTH=$((BANDWIDTH_PERCENT*BANDWIDTH_MAX/100))
 TC=tc
 
 # Where to store flow labels, accessible for other tools
-#FLOWS_FILENAME="/run/qos-flux.csv"
+FLOWS_FILENAME="/run/qos-flux.csv"
 
 # Which qdisc to use for HFSC leaves 
 #LEAF_QDISC="sfq perturb 10"
@@ -76,6 +76,10 @@ function filter_for_flow {
     $TC filter add dev $IF_8 parent 1: protocol ip prio $((filter_prio++)) u32 "$@" flowid "1:$flowid"
     $TC filter add dev $IF_9 parent 1: protocol ip prio $((filter_prio++)) u32 "$@" flowid "1:$flowid"
 }
+
+##############################################################################
+##############  LINK SHARING (ls) and UPPER LIMIT (ul) for HFSC ##############
+##############################################################################
 
 used_bw_percent_0=0
 function define_ls_flow_0 {   
@@ -165,6 +169,8 @@ function define_ls_flow_8 {
 
 }
 
+######## FUNCTION INTERFACE START #########
+
 function start_me {
     stop_me quiet 
 
@@ -178,7 +184,6 @@ function start_me {
     printf "Qos-flux Shaping on $IF_8\n"
     printf "Qos-flux Shaping on $IF_9\n"
 
-################### FLOW DEFINITIONS ###################
 
     # Add root qdisc
     $TC qdisc add dev $IF_1 root handle 1: hfsc default 50
@@ -389,6 +394,9 @@ function start_me {
         match u16 0x0000 0xff00 at 2
 }
 
+
+########### FUNCTION INTERFACE STOP ################
+
 function stop_me {
 
     # Interface removal settings
@@ -472,98 +480,103 @@ function stop_me {
      [ -e "$FLOWS_FILENAME" ] && rm -f "$FLOWS_FILENAME"
 }
 
+
+########### FUNCTION INTERFACE STATUS ################
+
 function status_me {
 
-    # interface status settings
+    # Interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_1
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_1 | grep -v 'tokens:' | grep -v 'lended:'
 
-    # interface status settings
+    # Interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_2
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_2 | grep -v 'tokens:' | grep -v 'lended:'
 
-    # interface status settings
+    # Interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_3
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_3 | grep -v 'tokens:' | grep -v 'lended:'
 
-   # interface status settings
+   # Interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_4
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_4 | grep -v 'tokens:' | grep -v 'lended:'
 
-   # interface status settings
+   # Interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_5
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_5 | grep -v 'tokens:' | grep -v 'lended:'
 
-    # interface status settings
+    # Interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_6
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_6 | grep -v 'tokens:' | grep -v 'lended:'
 
-    # interface status settings
+    # Interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_7
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_7 | grep -v 'tokens:' | grep -v 'lended:'
 
-   # interface status settings
+   # Interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_8
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_8 | grep -v 'tokens:' | grep -v 'lended:'
 
-    # interface status settings
+    # Interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_9
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_9 | grep -v 'tokens:' | grep -v 'lended:'
 }
 
+########### FUNCTION INTERFACE FILTERING ################
+
 function filter_me {
 
-    # interface filtering settings
+    # Interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_1
 
-    # interface filtering settings
+    # Interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_2
 
-    # interface filtering settings
+    # Interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_3
 
-    # interface filtering settings
+    # Interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_4
 
-    # interface filtering settings
+    # Interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_5
 
-    # interface filtering settings
+    # Interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_6
 
-    # interface filtering settings
+    # Interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_7
 
-    # interface filtering settings
+    # Interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_8
 
-    # interface filtering settings
+    # Interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_9
 }
