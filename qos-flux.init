@@ -10,7 +10,7 @@
 #
 # QoS-Flux 1.0
 #
-# Dynamic traffic shaping for SDN in different flows (elephants vs. mice, alpha vs. beta and Cheetah vs. turtles)
+# Dynamic traffic shaping for SDN in different flows (elephants vs. mice, alpha vs. beta and Cheetah vs. snails)
 #
 # Copyright (C) 2018 Alessandro Lima <alessandrolima1987@gmail.com>
 #
@@ -41,7 +41,7 @@ IF_7=s4-eth1
 IF_8=s4-eth2
 IF_9=s4-eth3
 
-# Definitions meter and percent BANDWIDTH flows (CHEETAH FLOW)
+# Definitions meter and percent Bandwidth
 
 BANDWIDTH_MAX=1000000
 
@@ -53,9 +53,9 @@ BANDWIDTH=$((BANDWIDTH_PERCENT*BANDWIDTH_MAX/100))
 TC=tc
 
 # Where to store flow labels, accessible for other tools
-FLOWS_FILENAME="/run/qos-flux.csv"
+#FLOWS_FILENAME="/run/qos-flux.csv"
 
-# Which qdisc to use for HFSC leaves (Elephant Flow and Alpha Flow)
+# Which qdisc to use for HFSC leaves 
 #LEAF_QDISC="sfq perturb 10"
 LEAF_QDISC="fq_codel ecn"
 
@@ -391,7 +391,7 @@ function start_me {
 
 function stop_me {
 
-    # Remove existing qdisc
+    # Interface removal settings
 
     active_qdisc=$(tc qdisc show dev $IF_1| head -n 1 | cut -d" " -f 2)
     if [ -n "$active_qdisc" -a "$active_qdisc" = "hfsc" ]; then
@@ -474,55 +474,55 @@ function stop_me {
 
 function status_me {
 
-    # Report settings
+    # interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_1
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_1 | grep -v 'tokens:' | grep -v 'lended:'
 
-    # Report settings
+    # interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_2
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_2 | grep -v 'tokens:' | grep -v 'lended:'
 
-    # Report settings
+    # interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_3
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_3 | grep -v 'tokens:' | grep -v 'lended:'
 
-   # Report settings
+   # interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_4
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_4 | grep -v 'tokens:' | grep -v 'lended:'
 
-   # Report settings
+   # interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_5
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_5 | grep -v 'tokens:' | grep -v 'lended:'
 
-    # Report settings
+    # interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_6
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_6 | grep -v 'tokens:' | grep -v 'lended:'
 
-    # Report settings
+    # interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_7
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_7 | grep -v 'tokens:' | grep -v 'lended:'
 
-   # Report settings
+   # interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_8
     printf "************************* CLASS ******************************\n"
     $TC -s class show dev $IF_8 | grep -v 'tokens:' | grep -v 'lended:'
 
-    # Report settings
+    # interface status settings
     printf "************************* QDISC ******************************\n"
     $TC qdisc show dev $IF_9
     printf "************************* CLASS ******************************\n"
@@ -531,39 +531,39 @@ function status_me {
 
 function filter_me {
 
-    # Report filter settings
+    # interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_1
 
-    # Report filter settings
+    # interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_2
 
-    # Report filter settings
+    # interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_3
 
-    # Report filter settings
+    # interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_4
 
-    # Report filter settings
+    # interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_5
 
-    # Report filter settings
+    # interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_6
 
-    # Report filter settings
+    # interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_7
 
-    # Report filter settings
+    # interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_8
 
-    # Report filter settings
+    # interface filtering settings
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_9
 }
