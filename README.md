@@ -40,17 +40,15 @@ $ sudo update-rc.d qos-flux defaults
 
 2) Configuration of the Ryu SDN controller (Taken from the Ryubook 1.0 manual)
 
-Then, modify simple_switch_13.py used in “Switching Hub”. rest_qos.py suppose to be processed on Flow Table pipeline processing, modify simple_switch_13.py to register flow entry into table id:1.
+- Modify the file "simple_switch_13.py" in the "~/ryu/ryu/app/simple_switch_13.py" folder, considering the user "ryu" in Linux as root. After this procedure, exit the ryu folder and run the build.
 
-controller: c0 (root)
+sudo su sed '/OFPFlowMod(/,/)/s/)/, table_id=1)/' ryu/ryu/app/simple_switch_13.py > ryu/ryu/app/qos_simple_switch_13.py
 
-sed '/OFPFlowMod(/,/)/s/)/, table_id=1)/' ryu/ryu/app/simple_switch_13.py > ryu/ryu/app/qos_simple_switch_13.py
+cd ryu/; 
 
-cd ryu/; python ./setup.py install
+python ./setup.py install
 
-Start rest_qos, qos_simple_switch_13 and rest_conf_switch on xterm of controller.
-
-controller: c0 (root):
+- Start rest_qos, qos_simple_switch_13 and rest_conf_switch on terminal Linux.
 
 ryu-manager ryu.app.rest_qos ryu.app.qos_simple_switch_13 ryu.app.rest_conf_switch
 
