@@ -19,7 +19,7 @@
 #
 #
 
-#The script was developed based on the SuperShaper-SOHO 2.0.
+#The script was developed based on the SuperShaper-SOHO 2.0 and Wonder Shaper 1.4.
 
 #This script has the prospect of improving on SDN (Software Defined Network) networks the loss of packets, delay, jitter and bandwidth in different flows.
 
@@ -56,13 +56,14 @@ TC=tc
 FLOWS_FILENAME="/run/qos-flux.csv"
 
 # Which qdisc to use for HFSC leaves 
-#LEAF_QDISC="sfq perturb 10"
-LEAF_QDISC="fq_codel ecn"
+#QDISC="sfq perturb 10"
+QDISC_FLOW="fq_codel ecn"
 
 ##############################################################################
 ######## FILTER PRIORITY #########
 ##############################################################################
 
+######## FUNCTION FILTER FOR FLOW #########
 
 function filter_for_flow {
     flowid="$1"; shift
@@ -77,16 +78,21 @@ function filter_for_flow {
     $TC filter add dev $IF_9 parent 1: protocol ip prio $((filter_prio++)) u32 "$@" flowid "1:$flowid"
 }
 
-##############################################################################
-##############  LINK SHARING (ls) and UPPER LIMIT (ul) for HFSC ##############
-##############################################################################
+###################################################################################################################
+##############  TC class for algorithm HFSC enabling LINK SHARING (ls) and UPPER LIMIT (ul) for HFSC ##############
+###################################################################################################################
+###################################################################################################################
+##############  TC qdisc for algorithm chosen in "QDISC_FLOW"  ####################################################
+###################################################################################################################
+
+######## FUNCTION LS FLOW #########
 
 used_bw_percent_0=0
 function define_ls_flow_0 {   
      flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
     min_bw=$((min_bw_percent*BANDWIDTH/100))
     $TC class add dev $IF_1 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
-    $TC qdisc add dev $IF_1 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    $TC qdisc add dev $IF_1 parent "1:$flowid" handle "$flowid:" $QDISC_FLOW
     used_bw_percent_0=$((used_bw_percent_0+min_bw_percent))
 }
 
@@ -96,7 +102,7 @@ function define_ls_flow_1 {
     flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
     min_bw=$((min_bw_percent*BANDWIDTH/100))
     $TC class add dev $IF_2 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
-    $TC qdisc add dev $IF_2 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    $TC qdisc add dev $IF_2 parent "1:$flowid" handle "$flowid:" $QDISC_FLOW
     used_bw_percent_1=$((used_bw_percent_1+min_bw_percent))
 }
 
@@ -105,7 +111,7 @@ function define_ls_flow_2 {
     flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
     min_bw=$((min_bw_percent*BANDWIDTH/100))
     $TC class add dev $IF_3 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
-    $TC qdisc add dev $IF_3 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    $TC qdisc add dev $IF_3 parent "1:$flowid" handle "$flowid:" $QDISC_FLOW
     used_bw_percent_2=$((used_bw_percent_2+min_bw_percent))
 
 }
@@ -115,7 +121,7 @@ function define_ls_flow_3 {
     flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
     min_bw=$((min_bw_percent*BANDWIDTH/100))
     $TC class add dev $IF_4 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
-    $TC qdisc add dev $IF_4 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    $TC qdisc add dev $IF_4 parent "1:$flowid" handle "$flowid:" $QDISC_FLOW
     used_bw_percent_3=$((used_bw_percent_3+min_bw_percent))
 
 }
@@ -125,7 +131,7 @@ function define_ls_flow_4 {
     flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
     min_bw=$((min_bw_percent*BANDWIDTH/100))
     $TC class add dev $IF_5 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
-    $TC qdisc add dev $IF_5 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    $TC qdisc add dev $IF_5 parent "1:$flowid" handle "$flowid:" $QDISC_FLOW
     used_bw_percent_4=$((used_bw_percent_4+min_bw_percent))
 
 }
@@ -135,7 +141,7 @@ function define_ls_flow_5 {
     flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
     min_bw=$((min_bw_percent*BANDWIDTH/100))
     $TC class add dev $IF_6 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
-    $TC qdisc add dev $IF_6 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    $TC qdisc add dev $IF_6 parent "1:$flowid" handle "$flowid:" $QDISC_FLOW
     used_bw_percent_3=$((used_bw_percent_5+min_bw_percent))
 
 }
@@ -145,7 +151,7 @@ function define_ls_flow_6 {
     flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
     min_bw=$((min_bw_percent*BANDWIDTH/100))
     $TC class add dev $IF_7 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
-    $TC qdisc add dev $IF_7 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    $TC qdisc add dev $IF_7 parent "1:$flowid" handle "$flowid:" $QDISC_FLOW
     used_bw_percent_6=$((used_bw_percent_6+min_bw_percent))
 }
 
@@ -154,7 +160,7 @@ function define_ls_flow_7 {
     flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
     min_bw=$((min_bw_percent*BANDWIDTH/100))
     $TC class add dev $IF_8 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
-    $TC qdisc add dev $IF_8 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    $TC qdisc add dev $IF_8 parent "1:$flowid" handle "$flowid:" $QDISC_FLOW
     used_bw_percent_7=$((used_bw_percent_7+min_bw_percent))
 
 }
@@ -164,7 +170,7 @@ function define_ls_flow_8 {
     flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
     min_bw=$((min_bw_percent*BANDWIDTH/100))
     $TC class add dev $IF_9 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
-    $TC qdisc add dev $IF_9 parent "1:$flowid" handle "$flowid:" $LEAF_QDISC
+    $TC qdisc add dev $IF_9 parent "1:$flowid" handle "$flowid:" $QDISC_FLOW
     used_bw_percent_8=$((used_bw_percent_8+min_bw_percent))
 
 }
