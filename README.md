@@ -3,7 +3,9 @@ Traffic Shaping rules for SDN
 
 Dynamic traffic shaping for SDN in different flows (elephants vs. mice, alpha vs. beta and Cheetah vs. turtles).
 
-# Instructions
+
+ Instructions
+ 
 The following instructions are designed to work in an Ubuntu 16.04. It should work in other linux OS with the correct packages installed.
 
 # Requirements
@@ -26,13 +28,13 @@ Modify the variables on top of QoS-flux.init and copy this file to /etc/init.d/Q
 
 On Ubuntu this is usually done like this:
 
-$ sudo cp QoS-flux.init /etc/init.d/QoS-flux
+$ sudo cp qoS-flux.init /etc/init.d/qos-flux
 
-$ sudo chown root:root /etc/init.d/QoS-flux
+$ sudo chown root:root /etc/init.d/qos-flux
 
-$ sudo chmod 0755 /etc/init.d/QoS-flux
+$ sudo chmod 0755 /etc/init.d/qos-flux
 
-$ sudo update-rc.d QoS-flux defaults
+$ sudo update-rc.d qos-flux defaults
 
 # Support
 
