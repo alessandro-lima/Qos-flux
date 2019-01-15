@@ -21,6 +21,7 @@ Ryu SDN Controller
 Ubuntu 16.04 is known to work and is the author's primary development platform.
 
 # Installation
+
 Modify the variables on top of QoS-flux.init and copy this file to /etc/init.d/QoS-flux. Make sure that the file has executable bits set. Then make sure it starts up automatically at startup.
 
 On Ubuntu this is usually done like this:
@@ -29,6 +30,6 @@ $ sudo cp QoS-flux.init /etc/init.d/QoS-flux
 
 $ sudo chown root:root /etc/init.d/QoS-flux
 
-$ sudo chmod 0755 /etc/init.d/supershaper
+$ sudo chmod 0755 /etc/init.d/QoS-flux
 
 $ sudo update-rc.d QoS-flux defaults
