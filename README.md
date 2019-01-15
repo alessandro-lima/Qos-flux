@@ -24,11 +24,11 @@ Ubuntu 16.04 was used for testing. However, qos-flux can be configured on any sy
 
 # Installation
 
-1) Installation Qos-Flux 
+1) Installation Qos-Flux:
 
 Modify the variables on top of QoS-flux.init and copy this file to /etc/init.d/QoS-flux. Make sure that the file has executable bits set. Then make sure it starts up automatically at startup.
 
-On Ubuntu this is usually done like this:
+On Ubuntu/Debian this is usually done like this:
 
 $ sudo cp qoS-flux.init /etc/init.d/qos-flux
 
@@ -38,7 +38,7 @@ $ sudo chmod 0755 /etc/init.d/qos-flux
 
 $ sudo update-rc.d qos-flux defaults
 
-2) Configuration of the Ryu SDN controller (Taken from the Ryubook 1.0 manual)
+2) Configuration of the Ryu SDN controller (taken from the Ryubook 1.0 manual):
 
 - Modify the file "simple_switch_13.py" in the "~/ryu/ryu/app/simple_switch_13.py" folder, considering the user "ryu" in Linux as root. After this procedure, exit the ryu folder and run the build.
 
@@ -52,7 +52,7 @@ python ./setup.py install
 
 ryu-manager ryu.app.rest_qos ryu.app.qos_simple_switch_13 ryu.app.rest_conf_switch
 
-3) Configuration of the Mininet
+3) Configuration of the Mininet:
 
 In the mininet we used in the tests a topology with 4 switches (an aggregation switch and 3 edge switches) as well as 9 hosts. In addition, we configured a topology with Openflow v1.3 and a network with 1 GBit of bandwidth, as we can see in the command below:
 
