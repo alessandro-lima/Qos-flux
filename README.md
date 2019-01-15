@@ -33,3 +33,11 @@ $ sudo chown root:root /etc/init.d/QoS-flux
 $ sudo chmod 0755 /etc/init.d/QoS-flux
 
 $ sudo update-rc.d QoS-flux defaults
+
+# Support
+
+If you require support for this product or have other contracting assignments, please contact the author directly via email.
+
+# Author, copyright and license
+
+See the main script and the file LICENSE for details.
