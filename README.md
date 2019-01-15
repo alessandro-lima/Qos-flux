@@ -26,6 +26,9 @@ Modify the variables on top of QoS-flux.init and copy this file to /etc/init.d/Q
 On Ubuntu this is usually done like this:
 
 $ sudo cp QoS-flux.init /etc/init.d/QoS-flux
+
 $ sudo chown root:root /etc/init.d/QoS-flux
+
 $ sudo chmod 0755 /etc/init.d/supershaper
+
 $ sudo update-rc.d QoS-flux defaults
