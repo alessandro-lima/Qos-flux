@@ -1,14 +1,10 @@
 # Copyright
-Copyright (c) 2018 Alessandro Lima alessandrolima@unb.br
+Copyright (c) 2018 Alessandro Lima alessandrolima1987@gmail.com
 
 # About
-Wonder Shaper is a script that allow the user to limit the bandwidth of one or more network adapters. It does so by using iproute's tc command, but greatly simplifies its operation. Wonder Shaper was first released by Bert Hubert in 2002, but the original version lacked a command-line interface, from on version 1.2 this feature was added. From version 1.3, the HTB queing is used instead of CBQ, allowing better bandwith managment on high speed (above ten megabits) links. In version 1.4 an improved ingress shaping method was implemented and the ability to limit either down or up (both is still possible too). The original README is a rather lengthy document and is saved under README.old, for those who'd like some more background information. Except any notes on operation this document is considered up-to-date.
-
-# Qos-flux
-Traffic Shaping rules for SDN
-
-Dynamic traffic shaping for SDN in different flows (elephants vs. mice, alpha vs. beta and Cheetah vs. snails).
-
+QoS-Flux is dynamic traffic shaping for SDN in different flows (elephants vs. mice, alpha vs. beta and Cheetah vs. snails) on one or more switches in an SDN network. It does this by invoking the iproute tc command automatically. The script was developed in the Shell Script language based on the SuperShaper-SOHO 2.0 project and Wonder Shaper 1.4. This script has the perspective of improving SDN (Software Defined Network) networks in relation to packet loss, delay, jitter and bandwidth in different streams.
+To run this script, you will need iproute2 (tc) and the Linux kernel netfilter installed. The howto of the TC filter can be found here: http://lartc.org/howto/lartc.qdisc.filters.html.
+The Man page of the u32 classifier can be found here: http://man7.org/linux/man-pages/man8/tc-u32.8.html.
 
 # Instructions
  
@@ -62,12 +58,9 @@ ryu-manager ryu.app.rest_qos ryu.app.qos_simple_switch_13 ryu.app.rest_conf_swit
 
 In the mininet we used in the tests a topology with 4 switches (an aggregation switch and 3 edge switches) as well as 9 hosts. In addition, we configured a topology with Openflow v1.3 and a network with 1 GBit of bandwidth, as we can see in the command below:
 
-mn --topo tree,depth=2,fanout=3 --switch ovsk --controller=remote, ip=10.1.1.1,protocols=OpenFlow13 --link tc,bw=1000
+mn --topo tree,depth=2,fanout=3 --switch ovsk --controller=remote, ip=10.2.0.15,protocols=OpenFlow13 --link tc,bw=1000
 
 # Support
 
 If you require support for this product or have other contracting assignments, please contact the author directly via email.
 
-# Author, copyright and license
-
-See the main script and the file LICENSE for details.
