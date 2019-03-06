@@ -2,7 +2,7 @@
 Copyright (c) 2018 Alessandro Lima alessandrolima1987@gmail.com
 
 # About
-QoS-Flux is Quality of Service Dynamic Rules for SDN in different flows (elephants vs. mice, alpha vs. beta and Cheetah vs. snails) on one or more switches in an SDN network. It does this by invoking the iproute tc command automatically. The script was developed in the Shell Script language based on the SuperShaper-SOHO 2.0 project and Wonder Shaper 1.4. This script has the perspective of improving SDN (Software Defined Network) networks in relation to packet loss, delay, jitter and bandwidth in different streams.
+QoS-Flux is a management of dynamic traffic control algorithms to provide quality of service in SDN in different flows (elephants vs. mice, alpha vs. beta and Cheetah vs. snails) on one or more switches in an SDN network. It does this by invoking the iproute tc command automatically. The script was developed in the Shell Script language based on the SuperShaper-SOHO 2.0 project and Wonder Shaper 1.4. This script has the perspective of improving SDN (Software Defined Network) networks in relation to packet loss, delay, jitter and bandwidth in different streams.
 To run this script, you will need iproute2 (tc) and the Linux kernel netfilter installed. The howto of the TC filter can be found here: http://lartc.org/howto/lartc.qdisc.filters.html.
 The Man page of the u32 classifier can be found here: http://man7.org/linux/man-pages/man8/tc-u32.8.html.
 
@@ -42,17 +42,9 @@ $ sudo update-rc.d qos-flux defaults
 
 2) Configuration of the Ryu SDN controller (taken from the Ryubook 1.0 manual):
 
-- Modify the file "simple_switch_13.py" in the "~/ryu/ryu/app/simple_switch_13.py" folder, considering the user "ryu" in Linux as root. After this procedure, exit the ryu folder and run the build.
+- Start in Ryu controller
 
-sudo su sed '/OFPFlowMod(/,/)/s/)/, table_id=1)/' ryu/ryu/app/simple_switch_13.py > ryu/ryu/app/qos_simple_switch_13.py
-
-cd ryu/; 
-
-python ./setup.py install
-
-- Start rest_qos, qos_simple_switch_13 and rest_conf_switch on terminal Linux.
-
-ryu-manager ryu.app.rest_qos ryu.app.qos_simple_switch_13 ryu.app.rest_conf_switch
+ryu-manager ryu.app.simple_switch_13 ryu.app.rest_conf_switch
 
 3) Configuration of the Mininet:
 
