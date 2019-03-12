@@ -2,8 +2,8 @@
 
 ### BEGIN INIT INFO
 # Provides:          QoS-Flux
-# Short-Description: traffic shaping rules for SDN
-# Description:       traffic shaping rules for SDN
+# Short-Description: Management of dynamic traffic control for SDN
+# Description:       Management of dynamic traffic control for SDN
 ### END INIT INFO
 
 ##############################################################################
