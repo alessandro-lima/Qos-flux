@@ -14,7 +14,7 @@ The following instructions are designed to work in an Ubuntu 16.04. It should wo
 
 - Iproute2 (tc command)
 
-- Linux kernel with support for HFSC and fq_codel schedulers (3.6 should work, but use 3.12 or later for better performance). If your Linux operating system is older, enable the SFQ algorithm in the qos-flux.init script.
+- Linux kernel with support for HFSC and fq_codel schedulers (3.6 should work, but use 3.12 or later for better performance).
 
 - Mininet Network Emulator
 
@@ -39,6 +39,10 @@ $ sudo chown root:root /etc/init.d/qos-flux
 $ sudo chmod 0755 /etc/init.d/qos-flux
 
 $ sudo update-rc.d qos-flux defaults
+
+create the file qos-flux.csv in the root directory:
+
+$ touch /root/qos-flux.csv
 
 2) Configuration of the Ryu SDN controller (taken from the Ryubook 1.0 manual):
 
