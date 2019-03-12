@@ -10,7 +10,8 @@
 #
 # QoS-Flux 1.0
 #
-# Dynamic traffic shaping for SDN in different flows (elephants vs. mice, alpha vs. beta and Cheetah vs. snails)
+# QoS-Flux is a management of dynamic traffic control algorithms to provide quality of service in SDN in different flows
+#(elephants vs. mice, alpha vs. beta and Cheetah vs. snails) on one or more switches in an SDN network.
 #
 # Copyright (C) 2018 Alessandro Lima <alessandrolima1987@gmail.com>
 #
@@ -21,8 +22,8 @@
 
 #The script was developed based on the SuperShaper-SOHO 2.0 and Wonder Shaper 1.4.
 
-#This script has the prospect of improving on SDN (Software Defined Network) networks the loss of packets, delay, jitter and bandwidth in different flows.
-
+#This script has the perspective of improving on SDN (Software Defined Network) 
+#networks the loss of packets, delay, jitter and bandwidth in different streams for applications that work using TCP.
 #To run this script, you will need iproute2 (tc) and the netfilter of the Linux kernel installed.
 #The howto of the TC filter can be found here: http://lartc.org/howto/lartc.qdisc.filters.html
 #Man page for u32 classifier can be found here: http://man7.org/linux/man-pages/man8/tc-u32.8.html
@@ -53,7 +54,7 @@ BANDWIDTH=$((BANDWIDTH_PERCENT*BANDWIDTH_MAX/100))
 TC=tc
 
 # Where to store flow labels, accessible for other tools
-FLOWS_FILENAME="/run/qos-flux.csv"
+FLOWS_FILENAME="/root/qos-flux.csv"
 
 # Which qdisc to use for HFSC leaves 
 #QDISC="sfq perturb 10"
