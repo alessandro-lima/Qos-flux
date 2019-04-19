@@ -2,8 +2,12 @@
 Copyright (c) 2018 Alessandro Lima alessandrolima1987@gmail.com
 
 # About
-QoS-Flux is a management of dynamic traffic control algorithms to provide quality of service in SDN in different flows (elephants vs. mice, alpha vs. beta and Cheetah vs. snails) on one or more switches in an SDN network. It does this by invoking the iproute tc command automatically. The script was developed in the Shell Script language based on the SuperShaper-SOHO 2.0 project and Wonder Shaper 1.4. This script has the perspective of improving SDN (Software Defined Network) networks in relation to packet loss, delay, jitter and bandwidth in different streams.
+QoS-Flux is a management of dynamic traffic control algorithms to provide quality of service in SDN in different flows (elephants vs. mice, alpha vs. beta and Cheetah vs. snails) on one or more switches in an SDN network. It does this by invoking the iproute tc command automatically. 
+
+The script was developed in the Shell Script language based on the SuperShaper-SOHO 2.0 project and Wonder Shaper 1.4. This script has the perspective of improving SDN (Software Defined Network) networks in relation to packet loss, delay, jitter and bandwidth in different streams.
+
 To run this script, you will need iproute2 (tc) and the Linux kernel netfilter installed. The howto of the TC filter can be found here: http://lartc.org/howto/lartc.qdisc.filters.html.
+
 The Man page of the u32 classifier can be found here: http://man7.org/linux/man-pages/man8/tc-u32.8.html.
 
 # Instructions
@@ -43,6 +47,16 @@ $ sudo update-rc.d qos-flux defaults
 create the file qos-flux.csv in the root directory:
 
 $ touch /root/qos-flux.csv
+
+Another way to run QoS-Flux, can be done directly in the root folder, where the download was done. We should add QoS-Flux.init as executable and then select the standard start, stop, filter, or status commands inside the Linux terminal under root.
+
+# QoS-Flux start
+
+# QoS-Flux stop
+
+# QoS-Flux filter
+
+# QoS-Flux status
 
 2) Configuration of the Ryu SDN controller (taken from the Ryubook 1.0 manual):
 
