@@ -50,13 +50,13 @@ $ touch /root/qos-flux.csv
 
 Another way to run QoS-Flux, can be done directly in the root folder, where the download was done. We should add QoS-Flux.init as executable and then select the standard start, stop, filter, or status commands inside the Linux terminal under root.
 
-$ sudo ./QoS-Flux start
+$ sudo ./qos-flux start
 
-$ sudo ./QoS-Flux stop
+$ sudo ./qos-flux stop
 
-$ sudo ./QoS-Flux filter
+$ sudo ./qos-flux filter
 
-$ sudo ./QoS-Flux status
+$ sudo ./qos-flux status
 
 2) Configuration of the Ryu SDN controller (taken from the Ryubook 1.0 manual):
 
