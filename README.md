@@ -48,15 +48,17 @@ create the file qos-flux.csv in the root directory:
 
 $ touch /root/qos-flux.csv
 
-Another way to run QoS-Flux, can be done directly in the root folder, where the download was done. We should add QoS-Flux.init as executable and then select the standard start, stop, filter, or status commands inside the Linux terminal under root.
+Another way to run QoS-Flux, can be done directly in the root folder, where the download was done. We should add QoS-Flux.init as executable and then select the standard start, stop, restart, filter, or status commands inside the Linux terminal under root.
 
-$ sudo ./qos-flux start
+$ sudo ./qos-flux.init start
 
-$ sudo ./qos-flux stop
+$ sudo ./qos-flux.init stop
 
-$ sudo ./qos-flux filter
+$ sudo ./qos-flux.init filter
 
-$ sudo ./qos-flux status
+$ sudo ./qos-flux.init status
+
+$ sudo ./qos-flux.init restart
 
 2) Configuration of the Ryu SDN controller (taken from the Ryubook 1.0 manual):
 
