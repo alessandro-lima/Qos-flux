@@ -2,7 +2,7 @@
 Copyright (c) 2018 Alessandro Lima alessandrolima1987@gmail.com
 
 # About
-QoS-Flux is a management of dynamic traffic control algorithms to provide quality of service in SDN in different flows (elephants vs. mice, alpha vs. beta and Cheetah vs. snails) on one or more switches in an SDN network. It does this by invoking the iproute tc command automatically. 
+QoS-Flux is a management of dynamic traffic control algorithms to provide SDN service quality in different streams (elephants vs. mice, alpha vs. beta and cheetah vs. snails) on one or more switches in an SDN network. This is done by invoking the iproute tc command automatically to trigger priority filters and QoS algorithms (HFSC and FQ_Codel) according to the network situation (delay, jitter, packet loss, and bandwidth).
 
 The script was developed in the Shell Script language based on the SuperShaper-SOHO 2.0 project and Wonder Shaper 1.4. This script has the perspective of improving SDN (Software Defined Network) networks in relation to packet loss, delay, jitter and bandwidth in different streams.
 
@@ -18,7 +18,7 @@ The following instructions are designed to work in an Ubuntu 16.04. It should wo
 
 - Iproute2 (tc command)
 
-- Linux kernel with support for HFSC and fq_codel schedulers (3.6 should work, but use 3.12 or later for better performance).
+- Linux kernel with support for HFSC and FQ_Codel schedulers (3.6 should work, but use 3.12 or later for better performance).
 
 - Mininet Network Emulator
 
