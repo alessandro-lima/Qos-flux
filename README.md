@@ -36,13 +36,13 @@ Modify the variables on top of QoS-flux.init and copy this file to /etc/init.d/Q
 
 On Ubuntu/Debian this is usually done like this:
 
-$ sudo cp qoS-flux.init /etc/init.d/qos-flux
+$ sudo cp qoS-flux.init /etc/init.d/qos-flux.init
 
-$ sudo chown root:root /etc/init.d/qos-flux
+$ sudo chown root:root /etc/init.d/qos-flux.init
 
-$ sudo chmod 0755 /etc/init.d/qos-flux
+$ sudo chmod 0755 /etc/init.d/qos-flux.init
 
-$ sudo update-rc.d qos-flux defaults
+$ sudo update-rc.d qos-flux.init defaults
 
 create the file qos-flux.csv in the root directory:
 
