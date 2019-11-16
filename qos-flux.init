@@ -11,7 +11,9 @@
 # QoS-Flux 1.0
 #
 # QoS-Flux is a management of dynamic traffic control algorithms to provide quality of service in SDN in different flows
-#(elephants vs. mice, alpha vs. beta and Cheetah vs. snails) on one or more switches in an SDN network.
+#(elephants vs. mice, alpha vs. beta and Cheetah vs. snails) on one or more switches in an SDN network.The QoS-Flux service
+#has mechanisms for working with real or virtual OpenFlow switches.For real switches it is necessary to uncomment the IF_100
+#interface (all lines of code) and comment out the other interfaces.
 #
 # Copyright (C) 2018 Alessandro Lima <alessandrolima1987@gmail.com>
 #
@@ -31,7 +33,7 @@
 ##############################################################################
 
 
-# Your outbound interface Open Vswitch (OVS)
+# Your outbound interface switch Open Vswitch (OVS)
 IF_1=s2-eth1
 IF_2=s2-eth2
 IF_3=s2-eth3
@@ -41,6 +43,10 @@ IF_6=s3-eth3
 IF_7=s4-eth1
 IF_8=s4-eth2
 IF_9=s4-eth3
+
+# Your outbound interface other switch
+#IF_100=
+
 
 # Definitions meter and percent Bandwidth
 
@@ -64,7 +70,7 @@ QDISC_FLOW="fq_codel ecn"
 ######## FILTER PRIORITY #########
 ##############################################################################
 
-######## FUNCTION FILTER FOR FLOW #########
+######## FUNCTION FILTER FOR FLOW OVS #########
 
 function filter_for_flow {
     flowid="$1"; shift
@@ -79,6 +85,13 @@ function filter_for_flow {
     $TC filter add dev $IF_9 parent 1: protocol ip prio $((filter_prio++)) u32 "$@" flowid "1:$flowid"
 }
 
+######## FUNCTION FILTER FOR FLOW OTHER SWITCH #########
+
+#function filter_for_flow {
+#    flowid="$1"; shift
+#$TC filter add dev $IF_100 parent 1: protocol ip prio $((filter_prio++)) u32 "$@" flowid "1:$flowid"
+#}
+
 ###################################################################################################################
 ##############  TC class for algorithm HFSC enabling LINK SHARING (ls) and UPPER LIMIT (ul) for HFSC ##############
 ###################################################################################################################
@@ -86,7 +99,7 @@ function filter_for_flow {
 ##############  TC qdisc for algorithm chosen in "QDISC_FLOW"  ####################################################
 ###################################################################################################################
 
-######## FUNCTION LS FLOW #########
+######## FUNCTION LS FLOW SWITCH OVS #########
 
 used_bw_percent_0=0
 function define_ls_flow_0 {   
@@ -176,7 +189,20 @@ function define_ls_flow_8 {
 
 }
 
-######## FUNCTION INTERFACE START #########
+######## FUNCTION LS FLOW OTHER SWITCH #########
+
+#used_bw_percent_100=0
+#function define_ls_flow_0 {   
+#     flowid="$1"; min_bw_percent="$2"; label="$3"; shift 3
+#    min_bw=$((min_bw_percent*BANDWIDTH/100))
+#    $TC class add dev $IF_100 parent 1:1 classid "1:$flowid" hfsc ls m2 "${min_bw}Kbit"
+#    $TC qdisc add dev $IF_100 parent "1:$flowid" handle "$flowid:" $QDISC_FLOW
+#    used_bw_percent_0=$((used_bw_percent_100+min_bw_percent))
+#}
+
+
+
+######## FUNCTION INTERFACE START SWITCH OVS #########
 
 function start_me {
     stop_me quiet 
@@ -190,9 +216,19 @@ function start_me {
     printf "Qos-flux Shaping on $IF_7\n"
     printf "Qos-flux Shaping on $IF_8\n"
     printf "Qos-flux Shaping on $IF_9\n"
+    
+######## FUNCTION INTERFACE START OTHER SWITCH #########
+
+#function start_me {
+#    stop_me quiet 
+
+#    printf "Qos-flux Shaping on $IF_100\n"
+
+    
+    
 
 
-    # Add root qdisc
+    # Add root qdisc switch OVS
     $TC qdisc add dev $IF_1 root handle 1: hfsc default 50
     $TC qdisc add dev $IF_2 root handle 1: hfsc default 50
     $TC qdisc add dev $IF_3 root handle 1: hfsc default 50 
@@ -202,6 +238,11 @@ function start_me {
     $TC qdisc add dev $IF_7 root handle 1: hfsc default 50 
     $TC qdisc add dev $IF_8 root handle 1: hfsc default 50
     $TC qdisc add dev $IF_9 root handle 1: hfsc default 50
+    
+      # Add root qdisc other switch
+    # $TC qdisc add dev $IF_100 root handle 1: hfsc default 50
+    
+    
 
     # Add main class, setting interface BANDWIDTH limit
 
@@ -222,6 +263,10 @@ function start_me {
     $TC class add dev $IF_8 parent 1: classid 1:1 hfsc ls m2 "${BANDWIDTH}Kbit" ul m2 "${BANDWIDTH}Kbit"
 
     $TC class add dev $IF_9 parent 1: classid 1:1 hfsc ls m2 "${BANDWIDTH}Kbit" ul m2 "${BANDWIDTH}Kbit"
+    
+    # Add main class, setting interface BANDWIDTH limit
+
+   # $TC class add dev $IF_100 parent 1: classid 1:1 hfsc ls m2 "${BANDWIDTH}Kbit" ul m2 "${BANDWIDTH}Kbit"
 
 
 ################ Define_ls_flow #######################
@@ -334,6 +379,18 @@ function start_me {
     define_ls_flow_8 48  100 #"FTP"
     define_ls_flow_8 50  85 #"Default" # unclassified traffic
     define_ls_flow_8 54  85 #"HTTPS" 
+    
+    
+    
+  #  define_ls_flow_100 11  100 #"ICMP"
+  #  define_ls_flow_100 12  100 #"DNS"
+  #  define_ls_flow_100 20  100 #"Traffic VoIP and Videoconferece"
+  #  define_ls_flow_100 40  100 #"SMTP"
+  #  define_ls_flow_100 41  100 #"IMAP and POP3"
+  #  define_ls_flow_100 45  100 #"HTTP"
+  #  define_ls_flow_100 48  100 #"FTP"
+  #  define_ls_flow_100 50  85 #"Default" # unclassified traffic
+  #  define_ls_flow_100 54  85 #"HTTPS" 
 
 
 
@@ -402,7 +459,7 @@ function start_me {
 }
 
 
-########### FUNCTION INTERFACE STOP ################
+########### FUNCTION INTERFACE STOP SWITCH OVS ################
 
 function stop_me {
 
@@ -487,8 +544,26 @@ function stop_me {
      [ -e "$FLOWS_FILENAME" ] && rm -f "$FLOWS_FILENAME"
 }
 
+########### FUNCTION INTERFACE STOP OTHER SWITCH ################
 
-########### FUNCTION INTERFACE STATUS ################
+#function stop_me {
+
+    # Interface removal settings
+
+ #   active_qdisc=$(tc qdisc show dev $IF_100| head -n 1 | cut -d" " -f 2)
+ #   if [ -n "$active_qdisc" -a "$active_qdisc" = "hfsc" ]; then
+ #       if [ -z "$1" -o "$1" != "quiet" ]; then
+ #           printf "Qos-flux off shaping on $IF_100\n"
+ #       fi
+ #       $TC qdisc del root dev $IF_100 2>&1 >/dev/null
+ #   fi
+     # Remove existing flows file if it exists
+  #   [ -e "$FLOWS_FILENAME" ] && rm -f "$FLOWS_FILENAME"
+#}
+ 
+
+
+########### FUNCTION INTERFACE STATUS SWITCH OVS ################
 
 function status_me {
 
@@ -547,7 +622,19 @@ function status_me {
     $TC -s class show dev $IF_9 | grep -v 'tokens:' | grep -v 'lended:'
 }
 
-########### FUNCTION INTERFACE FILTERING ################
+########### FUNCTION INTERFACE STATUS OTHER SWITCH ################
+
+# function status_me {
+
+    # Interface status settings
+    #printf "************************* QDISC ******************************\n"
+    #$TC qdisc show dev $IF_100
+    #printf "************************* CLASS ******************************\n"
+    #$TC -s class show dev $IF_100 | grep -v 'tokens:' | grep -v 'lended:'
+    
+    #}
+
+########### FUNCTION INTERFACE FILTERING SWITCH OVS ################
 
 function filter_me {
 
@@ -587,6 +674,15 @@ function filter_me {
     printf "************************* FILTER *****************************\n"
     $TC -p filter show dev $IF_9
 }
+
+########### FUNCTION INTERFACE FILTERING OTHER SWITCH ################
+
+#function filter_me {
+  # Interface filtering settings
+ #   printf "************************* FILTER *****************************\n"
+  #  $TC -p filter show dev $IF_100
+#}
+
 
 
 case "$1" in
