@@ -29,9 +29,9 @@ IF_9=s4-eth3
 
 TC=tc
 
-######## FUNCTION STATISTIC AND LOG SWITCH OVS#########
+######## FUNCTION STATISTIC AND LOG SWITCH OVS #########
 
-function monitoring {
+function statistic_me {
 shift
 # Interface statistic settings
     $TC -statistics qdisc show dev $IF_0
@@ -48,6 +48,17 @@ shift
 
 ######## FUNCTION STATISTIC AND LOG OTHER SWITCH #########
 
-function monitoring {
-shift
-     $TC -statistics qdisc show dev $IF_100
+#function statistic_me {
+#shift
+ #    $TC -statistics qdisc show dev $IF_100
+     
+     case "$1" in
+    statistic)
+        statistic_me
+
+        ;;
+    *)
+        exit 1
+esac
+
+exit 0
