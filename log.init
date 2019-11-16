@@ -1,0 +1,53 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:          QoS-Flux
+# Short-Description: Management of dynamic traffic control for SDN
+# Description:       Management of dynamic traffic control for SDN
+### END INIT INFO
+
+
+#For real switches it is necessary to uncomment the IF_100 interface (all lines of code) and comment out the other interfaces.
+#Default virtual OpenFlow switches
+
+# Your outbound interface switch Open Vswitch (OVS)
+IF_1=s2-eth1
+IF_2=s2-eth2
+IF_3=s2-eth3
+IF_4=s3-eth1
+IF_5=s3-eth2
+IF_6=s3-eth3
+IF_7=s4-eth1
+IF_8=s4-eth2
+IF_9=s4-eth3
+
+# Your outbound interface other switch
+#IF_100=
+
+
+# Set full path to TC command, unless it's in PATH
+
+TC=tc
+
+######## FUNCTION STATISTIC AND LOG SWITCH OVS#########
+
+function monitoring {
+shift
+# Interface statistic settings
+    $TC -statistics qdisc show dev $IF_0
+    $TC -statistics qdisc show dev $IF_1
+    $TC -statistics qdisc show dev $IF_2
+    $TC -statistics qdisc show dev $IF_3
+    $TC -statistics qdisc show dev $IF_4
+    $TC -statistics qdisc show dev $IF_5
+    $TC -statistics qdisc show dev $IF_6
+    $TC -statistics qdisc show dev $IF_7
+    $TC -statistics qdisc show dev $IF_8
+    
+}
+
+######## FUNCTION STATISTIC AND LOG OTHER SWITCH #########
+
+function monitoring {
+shift
+     $TC -statistics qdisc show dev $IF_100
