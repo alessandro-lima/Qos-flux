@@ -59,8 +59,8 @@ BANDWIDTH=$((BANDWIDTH_PERCENT*BANDWIDTH_MAX/100))
 # Set full path to TC command, unless it's in PATH
 TC=tc
 
-# Where to store flow labels, accessible for other tools
-FLOWS_FILENAME="/root/qos-flux.csv"
+# Where to store service flow and log statistics, accessible for SDN controller analysis
+FLOWS_FILENAME="$PATH/Qos-flux/log.init"
 
 # Which qdisc to use for HFSC leaves 
 #QDISC="sfq perturb 10"
